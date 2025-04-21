@@ -5,9 +5,10 @@ export default function Inschrijving() {
   const [file, setFile] = useState(null);
   const [voorNaam, setVoorNaam] = useState("");
   const [lastName, setLastName] = useState("");
+  const [toonPDF, setToonPDF] = useState(false); // 👈 nodig voor uitklappen
 
   const handleFileChange = (e) => setFile(e.target.files[0]);
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -38,19 +39,52 @@ export default function Inschrijving() {
   return (
     <>
       <Header />
-
       <div className="max-w-2xl mx-auto mt-12 px-6 py-8 bg-white shadow-lg rounded-lg">
         <h1 className="text-3xl font-extrabold text-center text-blue-900 mb-4">Inschrijving</h1>
-        <a
-    href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-AFL-2.pdf"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md"
-  >
-    Intakeformulier
-  </a>
-        <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">Beste ontvanger,</h2>
 
+        {/* 👇 Uitklapbare PDF */}
+        <div className="mb-6 text-center">
+          <button
+            onClick={() => setToonPDF(!toonPDF)}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow"
+          >
+            {toonPDF ? "Verberg info" : "financieel info AFL"}
+          </button>
+
+          {toonPDF && (
+            <div className="mt-4">
+              <iframe
+                src="http://nos-adfontes.net/wp-content/uploads/2025/04/Financiele-informatie-2025-2026.pdf"
+                width="100%"
+                height="600px"
+                className="border rounded-md shadow"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Financiële info */}
+        {/* <iframe
+          src="http://nos-adfontes.net/wp-content/uploads/2025/04/Financiele-informatie-AFL-2025-2026-final.pdf"
+          width="70%"
+          height="300px"
+          className="my-6 border rounded-md shadow mx-auto"
+        /> */}
+
+        {/* PDF downloaden */}
+        <div className="text-center">
+          <a
+            href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-AFL-2.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md"
+          >
+            Intakeformulier
+          </a>
+        </div>
+
+        {/* Instructietekst */}
+        <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">Beste ontvanger,</h2>
         <p className="text-center text-gray-600 italic">
           U kunt uw zoon/dochter aanmelden door het intakeformulier volledig in te vullen en te uploaden...
         </p>
@@ -61,6 +95,7 @@ export default function Inschrijving() {
           Let op: Het invullen van het inschrijfformulier geeft nog geen garantie op plaatsing.
         </p>
 
+        {/* Uploadformulier */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -109,14 +144,12 @@ export default function Inschrijving() {
           </div>
 
           <div className="text-center">
-            
             <button
               type="submit"
               className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md shadow-md"
             >
               Uploaden
             </button>
-            
           </div>
         </form>
       </div>
