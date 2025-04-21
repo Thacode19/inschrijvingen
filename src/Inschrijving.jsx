@@ -54,7 +54,7 @@ export default function Inschrijving() {
           {toonPDF && (
             <div className="mt-4">
               <iframe
-                src="http://nos-adfontes.net/wp-content/uploads/2025/04/Financiele-informatie-2025-2026.pdf"
+                src="https://res.cloudinary.com/dxu5lomow/image/upload/v1745242712/Financiele-informatie_2025-2026_oc3iib.pdf"
                 width="100%"
                 height="600px"
                 className="border rounded-md shadow"
