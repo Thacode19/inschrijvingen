@@ -25,7 +25,8 @@ export default function Inschrijving() {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Upload gelukt! URL: " + data.document.url);
+        alert("Upload gelukt! druk oke, om door te gaan naar de kalender om een afspraak te maken " + data.document.url);
+        //alert("Upload gelukt! URL: " + data.document.url);
         window.location.href = "https://nos-adfontes.net/inschrijving/";
       } else {
         alert("Upload mislukt.");
@@ -48,7 +49,7 @@ export default function Inschrijving() {
             onClick={() => setToonPDF(!toonPDF)}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md shadow"
           >
-            {toonPDF ? "Verberg info" : "financieel info AFL"}
+            {toonPDF ? "Verberg info" : "Financiële informatie"}
           </button>
 
           {toonPDF && (
@@ -74,17 +75,27 @@ export default function Inschrijving() {
         {/* PDF downloaden */}
         <div className="text-center">
           <a
-            href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-AFL-2.pdf"
+            href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-AFL-Final.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md"
           >
-            Intakeformulier
+            Intakeformulier AFL
+          </a>
+        </div>
+        <div className="text-center">
+          <a
+            href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-NOS-Final.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md"
+          >
+            Intakeformulier NOS
           </a>
         </div>
 
         {/* Instructietekst */}
-        <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">Beste ontvanger,</h2>
+        <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">Beste Ouder/Verzorger,</h2>
         <p className="text-center text-gray-600 italic">
           U kunt uw zoon/dochter aanmelden door het intakeformulier volledig in te vullen en te uploaden...
         </p>
