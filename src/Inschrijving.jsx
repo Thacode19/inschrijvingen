@@ -6,7 +6,14 @@ export default function Inschrijving() {
   const [voorNaam, setVoorNaam] = useState("");
   const [lastName, setLastName] = useState("");
   const [toonPDF, setToonPDF] = useState(false); // 👈 nodig voor uitklappen
+  const [isClicked, setIsClicked] = useState(false);
 
+  const handleUpload = (e) => {
+    e.preventDefault();
+    setIsClicked(true);
+    handleSubmit(e);
+  };
+  
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = async (e) => {
@@ -25,7 +32,7 @@ export default function Inschrijving() {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Upload gelukt! druk oke, om door te gaan naar de kalender om een afspraak te maken " + data.document.url);
+        alert("Upload gelukt! druk oke, om door te gaan naar de kalender om een afspraak te maken " );
         //alert("Upload gelukt! URL: " + data.document.url);
         window.location.href = "https://nos-adfontes.net/inschrijving/";
       } else {
@@ -155,12 +162,26 @@ export default function Inschrijving() {
           </div>
 
           <div className="text-center">
-            <button
+            {/* <button
               type="submit"
               className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md shadow-md"
             >
               Uploaden
-            </button>
+            </button> */}
+            <button
+      type="submit"
+      onClick={handleUpload}
+      disabled={isClicked}
+      className={`${
+        isClicked ? "bg-blue-700 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
+      } text-white font-semibold py-2 px-6 rounded-md shadow-md`}
+    >
+      {isClicked ? (
+  <div className="spinner-border text-light " role="status">
+    <span className="visually-hidden">Laden...</span>
+  </div>
+) : (<span className="bg-blue-700 hover:bg-blue-800 ">Uploaden</span>)}
+    </button>
           </div>
         </form>
       </div>

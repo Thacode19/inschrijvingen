@@ -1,4 +1,4 @@
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 // src/App.jsx
 import Header from "./Header";
