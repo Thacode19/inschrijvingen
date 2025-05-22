@@ -5,19 +5,22 @@ export default function Inschrijving() {
   const [file, setFile] = useState(null);
   const [voorNaam, setVoorNaam] = useState("");
   const [lastName, setLastName] = useState("");
-  const [toonPDF, setToonPDF] = useState(false); // 👈 nodig voor uitklappen
-  const [isClicked, setIsClicked] = useState(false);
+  const [toonPDF, setToonPDF] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleUpload = (e) => {
-    e.preventDefault();
-    setIsClicked(true);
-    handleSubmit(e);
-  };
-  
   const handleFileChange = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    if (!file || !voorNaam || !lastName) {
+      setError("Alle velden zijn verplicht");
+      setIsSubmitting(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("voornaam", voorNaam);
@@ -31,16 +34,17 @@ export default function Inschrijving() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        alert("Upload gelukt! druk oke, om door te gaan naar de kalender om een afspraak te maken " );
-        //alert("Upload gelukt! URL: " + data.document.url);
+        await response.json();
+        alert("Upload gelukt! Druk oke om door te gaan naar de kalender om een afspraak te maken");
         window.location.href = "https://nos-adfontes.net/inschrijving/";
       } else {
-        alert("Upload mislukt.");
+        throw new Error("Upload mislukt");
       }
     } catch (error) {
       console.error("Fout bij upload:", error);
-      alert("Upload mislukt door netwerkfout.");
+      setError(error.message || "Upload mislukt door netwerkfout.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -50,7 +54,7 @@ export default function Inschrijving() {
       <div className="max-w-2xl mx-auto mt-12 px-6 py-8 bg-white shadow-lg rounded-lg">
         <h1 className="text-3xl font-extrabold text-center text-blue-900 mb-4">Inschrijving</h1>
 
-        {/* 👇 Uitklapbare PDF */}
+        {/* PDF Toggle */}
         <div className="mb-6 text-center">
           <button
             onClick={() => setToonPDF(!toonPDF)}
@@ -66,54 +70,47 @@ export default function Inschrijving() {
                 width="100%"
                 height="600px"
                 className="border rounded-md shadow"
+                title="Financiële informatie"
               />
             </div>
           )}
         </div>
 
-        {/* Financiële info */}
-        {/* <iframe
-          src="http://nos-adfontes.net/wp-content/uploads/2025/04/Financiele-informatie-AFL-2025-2026-final.pdf"
-          width="70%"
-          height="300px"
-          className="my-6 border rounded-md shadow mx-auto"
-        /> */}
-
-        {/* PDF downloaden */}
-        <div className="text-center">
+        {/* Form Download Links */}
+        <div className="flex justify-center gap-4">
           <a
             href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-AFL-Final.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md"
+            className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-colors"
           >
             Intakeformulier AFL
           </a>
-        </div>
-        <div className="text-center">
           <a
             href="http://nos-adfontes.net/wp-content/uploads/2025/04/Intakeformulier-2025-2026-NOS-Final.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md"
+            className="inline-block mt-4 bg-blue-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-md shadow-md transition-colors"
           >
             Intakeformulier NOS
           </a>
         </div>
 
-        {/* Instructietekst */}
-        <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">Beste Ouder/Verzorger,</h2>
-        <p className="text-center text-gray-600 italic">
-          U kunt uw zoon/dochter aanmelden door het intakeformulier volledig in te vullen en te uploaden...
-        </p>
-        <p className="text-center text-gray-600 italic mb-4">
-          Na het uploaden kunt u ook zelf een afspraak maken via de kalender
-        </p>
-        <p className="text-center text-sm text-red-600 mb-6">
-          Let op: Het invullen van het inschrijfformulier geeft nog geen garantie op plaatsing.
-        </p>
+        {/* Instructions */}
+        <div className="mt-6 text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Beste Ouder/Verzorger,</h2>
+          <p className="text-gray-600 italic">
+            U kunt uw zoon/dochter aanmelden door het intakeformulier volledig in te vullen en te uploaden...
+          </p>
+          <p className="text-gray-600 italic mb-4">
+            Na het uploaden kunt u ook zelf een afspraak maken via de kalender
+          </p>
+          <p className="text-sm text-red-600 mb-6">
+            Let op: Het invullen van het inschrijfformulier geeft nog geen garantie op plaatsing.
+          </p>
+        </div>
 
-        {/* Uploadformulier */}
+        {/* Upload Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -124,7 +121,7 @@ export default function Inschrijving() {
                 type="text"
                 value={voorNaam}
                 onChange={(e) => setVoorNaam(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring focus:ring-blue-300"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring focus:ring-blue-300"
                 required
               />
             </div>
@@ -137,7 +134,7 @@ export default function Inschrijving() {
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 focus:ring focus:ring-blue-300"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border focus:ring focus:ring-blue-300"
                 required
               />
             </div>
@@ -161,27 +158,30 @@ export default function Inschrijving() {
             />
           </div>
 
+          {error && (
+            <div className="text-red-600 text-center">
+              {error}
+            </div>
+          )}
+
           <div className="text-center">
-            {/* <button
-              type="submit"
-              className="bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md shadow-md"
-            >
-              Uploaden
-            </button> */}
             <button
-      type="submit"
-      onClick={handleUpload}
-      disabled={isClicked}
-      className={`${
-        isClicked ? "bg-blue-700 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
-      } text-white font-semibold py-2 px-6 rounded-md shadow-md`}
-    >
-      {isClicked ? (
-  <div className="spinner-border text-light " role="status">
-    <span className="visually-hidden">Laden...</span>
-  </div>
-) : (<span className="bg-blue-700 hover:bg-blue-800 ">Uploaden</span>)}
-    </button>
+              type="submit"
+              disabled={isSubmitting}
+              className={`${
+                isSubmitting ? "bg-blue-600 cursor-not-allowed" : "bg-blue-700 hover:bg-blue-800"
+              } text-white font-semibold py-2 px-6 rounded-md shadow-md transition-colors min-w-[120px]`}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Verwerken...
+                </span>
+              ) : "Uploaden"}
+            </button>
           </div>
         </form>
       </div>
